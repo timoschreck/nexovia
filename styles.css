@@ -1,12 +1,12 @@
 /* Base styles */
 :root {
-  /* Brand palette derived from the new Nexovia logo */
-  --color-primary: #0D1321;     /* Midnight Navy for backgrounds */
-  --color-secondary: #00B4D8;   /* Aqua Energy for highlights */
-  --color-accent: #8A0AF8;      /* Electric Violet for gradients */
-  --color-magenta: #E14DFF;     /* Magenta Glow for strong calls to action */
-  --color-light: #F5F9FC;       /* Ice Gray for light panels */
-  --color-dark: #02040F;        /* Obsidian, the darkest shade */
+  /* Updated Nexovia palette for the marketing site (dark, tech‑affin) */
+  --color-primary: #0F1338;     /* Surface dark navy for panels/cards */
+  --color-secondary: #196FD4;   /* Primary blue for highlights and gradients */
+  --color-accent: #4621C6;      /* Secondary purple for gradients and emphasis */
+  --color-magenta: #5FBCF5;     /* Accent cyan for calls to action */
+  --color-light: #F5F7FF;       /* Very light neutral for text and panels */
+  --color-dark: #000000;        /* True black for backgrounds */
 }
 
 * {
@@ -92,6 +92,25 @@ h3 { font-size: 1.5rem; }
   background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
   padding: 6rem 0;
   text-align: center;
+}
+
+/* Small tagline above the hero heading */
+.hero .eyebrow {
+  color: var(--color-light);
+  opacity: 0.7;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
+/* Container for multiple CTA buttons */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
 }
 
 .hero p {

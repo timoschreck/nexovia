@@ -2,14 +2,14 @@
 
 ## Brand Essence
 
-- **Mission:** Empower businesses to thrive in a digital-first world by merging AI, data-driven sales strategies and innovation to accelerate growth and efficiency.
-- **Vision:** To be the leading partner for hybrid AI solutions that transform how businesses sell and operate.
+- **Mission:** Energieunternehmen dabei zu unterstützen, die Energiewende voranzutreiben, indem wir sie mit qualifizierten Endkunden und passenden Fachkräften für Photovoltaik‑ und Wärmepumpen‑Projekte verbinden.
+- **Vision:** Der führende Partner für Recruiting und Leadgenerierung im Bereich erneuerbare Energien zu sein – mit klarem Branchenfokus, exklusiven Leads und datengetriebenen Prozessen.
 
 ## Tone of Voice
 
-- Confident, forward-thinking and aspirational.
-- Clear and concise, avoiding jargon.
-- Focused on benefits and empowerment.
+- **Fokussiert auf den Nutzen:** Spreche klar aus, wie unsere Leistungen PV‑ und Wärmepumpen‑Unternehmen voranbringen (z.&nbsp;B. „Exklusive Leads, keine Streuverluste“).
+- **Partnerschaftlich und vertrauenswürdig:** Betone, dass wir langfristige Beziehungen aufbauen und Verantwortung für Datenschutz und Datenqualität übernehmen.
+- **Energiegeladen und ermutigend:** Formuliere aktiv, positiv und mit dem Blick auf die Energiewende – ohne leere Versprechen.
 
 ## Logo
 
@@ -20,51 +20,52 @@ Use the full‑colour logo whenever possible. On dark backgrounds the gradient a
 Maintain a clear zone around the logo equal to the height of the letter “N” in the wordmark. **Do not** crop, distort, rotate or apply additional effects to the logo. Avoid placing it on busy or low‑contrast backgrounds that would impair legibility.
 
 ## Colour Palette
+Die Nexovia‑Farbwelt bleibt dunkel und tech‑affin, lehnt sich aber bewusst an die Energiewende an: ein tiefes Navy kombiniert mit lebendigen Blautönen und sanften Akzenten.
 
-The Nexovia palette is inspired by the vibrant gradient of the logo. It moves from bright aqua through deep indigo to electric violet, evoking innovation and digital energy. A dark base anchors the interface, while light neutrals ensure readability.
+| Einsatzbereich | Farbname            | Hex‑Code | Beschreibung |
+|---------------|--------------------|---------|-------------|
+| Hintergrund    | **True Black**        | #000000 | Dunkelster Hintergrund für Seiten und Navigation. |
+| Fläche/Karten | **Dark Navy**         | #0F1338 | Hintergrund für Karten und Boxen, sorgt für Tiefe und Ruhe. |
+| Primär (Blau) | **Primary Blue**       | #196FD4 | Akzentfarbe für Links, Buttons und Highlights. |
+| Sekundär (Purpur) | **Secondary Purple**    | #4621C6 | Zweite Gradientfarbe für Hintergründe und Hover‑Zustände. |
+| Akzent        | **Accent Cyan**       | #5FBCF5 | Starker Farbtupfer für Calls‑to‑Action (Buttons, Links). |
+| Akzent 2      | **Accent Lavender**   | #AF7AF2 | Sanfterer Akzent für sekundäre Highlights. |
+| Neutral hell  | **Off White**         | #F5F7FF | Haupttext und Flächen auf dunklen Hintergründen. |
+| Neutral gedämpft | **Muted Blue**       | #B8C0E0 | Für Erläuterungen, sekundären Text und Grenzen. |
 
-| Purpose        | Colour name      | Hex code | Description |
-|---------------|-----------------|---------|-------------|
-| Primary       | **Midnight Navy**   | #0D1321 | Dark background used for pages and navigation. Creates contrast for glowing gradients. |
-| Gradient Start| **Aqua Energy**     | #00B4D8 | Beginning of the gradient; used in buttons, highlights and backgrounds. |
-| Gradient End  | **Electric Violet** | #8A0AF8 | Ending of the gradient; used for emphasis and in the wordmark. |
-| Secondary     | **Sky Cyan**        | #29C9E8 | Supporting colour for links and icons. |
-| Accent        | **Magenta Glow**    | #E14DFF | Used sparingly to draw attention to calls‑to‑action or hover states. |
-| Neutral Light | **Ice Gray**        | #F5F9FC | Background for cards and text areas on dark pages. |
-| Neutral Dark  | **Obsidian**        | #02040F | Deepest shade for footers and overlays. |
-
-The primary shade provides a calm backdrop for the vibrant gradient. Use the gradient start and end colours together to create smooth transitions in backgrounds, buttons or typography. Secondary and accent colours support icons and interactive elements. Ensure sufficient contrast (WCAG 2.1 AA) by pairing light text on dark backgrounds and vice versa.
+Setze den blauen Verlauf (Primary Blue → Secondary Purple) für große Hintergründe, insbesondere im Hero‑Bereich, ein. Nutze Accent Cyan für starke CTAs und Accent Lavender für subtile Highlights. Achte stets auf ausreichende Kontraste (WCAG 2.1 AA).
 
 ## Typography
+Die Typografie soll technisch modern wirken und zugleich gut lesbar sein.
 
-Choose typefaces that echo the geometric, futuristic feeling of the Nexovia wordmark. Combining a distinctive display font with a neutral body font ensures clarity and personality.
+| Stil        | Schriftfamilie      | Verwendung |
+|-------------|----------------------|-------------|
+| Headlines   | **Poppins SemiBold**  | Für Überschriften und große Statements. Die geometrische Form passt zur Wortmarke. |
+| Body        | **Inter Regular**       | Für längere Texte, Absätze und UI‑Elemente. Klare Lesbarkeit auf allen Geräten. |
+| Logo/Betonung | **Poppins Bold**      | Für Wortmarke, Buttons oder kurze Schlagworte. |
 
-| Style        | Typeface           | Usage |
-|-------------|--------------------|-------|
-| Headlines   | **Poppins SemiBold** | Geometric sans serif used for headings and large call‑outs. Its clean curves mirror the wordmark without overpowering the design. |
-| Body text   | **Inter Regular**      | Friendly, highly legible sans serif for paragraphs and smaller text. |
-| Accent/Logo | **Poppins Bold**     | Use for the logo wordmark and occasional emphasis or numerals. |
-
-Load the typefaces from a reliable source such as Google Fonts. Maintain consistent line spacing and kerning. Use sentence case for body copy and title case for headlines. On web, specify fallbacks (e.g., sans‑serif) to ensure graceful degradation.
+Hoste die Schriften nach Möglichkeit lokal (z.&nbsp;B. als .woff2), um externe Abhängigkeiten zu vermeiden. Lege fallback‑Fonts wie „system‑ui“, „Segoe UI“ oder „sans-serif“ fest.
 
 ## Imagery & Iconography
 
 Select imagery that conveys innovation, connectivity and empowerment—abstract patterns, neural networks, futuristic cityscapes and people collaborating with technology. Use icons with line‑art style and rounded corners to complement the logo.
 
 ## Layout & UI Elements
+ - **Hero:** Dunkler Hintergrund mit einem diagonalen Verlauf von Primary Blue zu Secondary Purple. Eyebrow (z. B. „Spezialisiert auf Photovoltaik & Wärmepumpen“), starke H1 und klare Subline erklären das Angebot auf den ersten Blick.
+ - **Leistungen (Drei Säulen):** Drei Karten beschreiben Leadgenerierung Photovoltaik, Leadgenerierung Wärmepumpen und Fachkräfte‑Recruiting. Jede Karte steht auf einer Dark‑Navy‑Fläche mit abgerundeten Ecken.
+ - **Vorteile:** Sechs Karten bilden die wichtigsten Vorteile ab (Branchenfokus, Exklusivität, Datengetrieben, Partnerschaftlich, Schnelle Ergebnisse, DSGVO‑konform). Verwende ein flexibles Grid, damit sich die Items responsiv anordnen.
+ - **Über uns:** Ein Abschnitt mit Überschrift und 1‑2 Absätzen, der die Mission und den Standort (Mannheim) erklärt. Auf dunklem Hintergrund mit hellen Texten.
+ - **Kontakt/CTA:** Kombiniere einen motivierenden CTA („Jetzt bewerben“) mit Kontaktinformationen (Adresse Mannheim, Mail, Telefon) und einem einfachen Kontaktformular. Buttonfarben nutzen den Accent Cyan.
 
- - **Hero section:** Set a Midnight Navy base and overlay a diagonal gradient from Aqua Energy to Electric Violet to frame a bold headline and subheading that clearly communicates Nexovia’s value proposition.
- - **Features section:** Present three to four key benefits with simple line‑style icons and short descriptions. Cards should sit on Ice Gray panels for contrast against the dark page.
- - **Case studies:** Use cards on a slightly lighter dark tone (Obsidian) with subtle hover effects. Include a short summary and a link to learn more.
- - **Call‑to‑action:** Use Magenta Glow or a gradient transition from Aqua Energy to Electric Violet for buttons. Maintain generous padding, rounded corners and clear hover states.
-
-Consistent spacing, alignment and hierarchy are critical for a polished, professional appearance. Use a 12‑column grid on desktop and a 6‑column grid on mobile.
+Halten Sie die Abstände und Spalten konsistent, nutzen Sie klare Hierarchien und sorgen Sie für einen luftigen Gesamteindruck. Auf Desktop empfiehlt sich ein 12‑Spalten‑Grid, auf mobilen Geräten ein 6‑Spalten‑Grid.
 
 ## Voice & Copy Guidelines
+Unsere Copy spricht Energieunternehmen direkt an und betont klare Vorteile:
 
-- Speak directly to the reader (second person).
-- Highlight outcomes (“Boost revenue by …”) rather than features (“Our tool uses …”).
-- Use verbs like “empower”, “transform”, “accelerate”.
+- Spreche den Leser direkt an („Du“/„Ihr“) und zeige auf, wie Nexovia hilft.
+- Betone Ergebnisse („Vorqualifizierte Leads ohne Streuverluste“) statt interne Technik („Unser Tool nutzt …“).
+- Verwende aktive Verben wie „verbinden“, „qualifizieren“, „beschleunigen“.
+- Halte Texte kurz, prägnant und frei von Buzzwords.
 
 ## Accessibility
 
