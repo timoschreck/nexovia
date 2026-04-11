@@ -12,6 +12,23 @@ Die Datei `landing_page.html` ist eine eigenständige Seite mit einem mehrstufig
 
 `server.js` implementiert einen Express‑Server, der statische Dateien bedient und unter `/api/leads` POST‑Anfragen entgegennimmt. Die Daten werden in `leads.json` gespeichert.
 
+### E-Mail-Benachrichtigungen
+
+Optional kann der Server einen Hinweis per E‑Mail versenden, sobald ein neuer Lead eingeht. Dazu wird die Bibliothek **nodemailer** verwendet. Damit dies funktioniert, müssen gültige SMTP‑Zugangsdaten über Umgebungsvariablen bereitgestellt werden:
+
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` – Zugangsdaten Ihres E‑Mail‑Servers
+- `SMTP_SECURE` – `true` falls eine verschlüsselte Verbindung (z. B. Port 465) genutzt wird, sonst `false` oder leer
+- `SMTP_FROM` – Absenderadresse für die E‑Mails (optional; falls nicht gesetzt, wird `SMTP_USER` verwendet)
+- `ADMIN_EMAIL` – Zieladresse, an die der Lead geschickt wird
+
+Wenn diese Variablen gesetzt sind, versendet der POST‑Endpunkt automatisch eine E‑Mail mit den Lead‑Daten, nachdem sie gespeichert wurden.
+
+Um **nodemailer** zu installieren, führen Sie vor dem Start des Servers aus:
+
+```bash
+npm install express nodemailer
+```
+
 ### Leads abrufen und verwalten
 
 Es gibt eine einfache Administrationsseite (`admin.html`), über die alle gespeicherten Leads eingesehen werden können. Der Server stellt dafür den Endpunkt `/api/leads` bereit, der eine JSON‑Liste der Leads zurückgibt. Aus Sicherheitsgründen verlangt dieser Endpunkt einen Header `X-Admin-Token` mit einem geheimen Token. Standardmäßig ist das Token in `server.js` auf `secret` gesetzt; in einer produktiven Umgebung sollte es über die Umgebungsvariable `ADMIN_TOKEN` überschrieben werden.
