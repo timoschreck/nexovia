@@ -39,16 +39,21 @@
 </head>
 <body>
   <h1>Gesammelte Leads</h1>
+  <div style="text-align:center; margin-bottom: 20px;">
+    <button id="exportCsvBtn" style="padding: 8px 12px; font-size: 14px; cursor: pointer;">CSV exportieren</button>
+    <button id="deleteLeadsBtn" style="padding: 8px 12px; font-size: 14px; cursor: pointer; margin-left: 10px; background-color: #ef4444; color: #fff; border: none;">Leads löschen</button>
+  </div>
   <div id="error" class="error"></div>
   <table id="leadsTable">
     <thead>
       <tr>
         <th>Name</th>
-        <th>E-Mail</th>
+        <th>E‑Mail</th>
         <th>Telefon</th>
         <th>Immobilientyp</th>
         <th>Dachfläche (m²)</th>
         <th>Baujahr</th>
+        <th>Heizsystem</th>
         <th>Zeitstempel</th>
       </tr>
     </thead>
@@ -77,7 +82,7 @@
           document.getElementById('error').textContent = 'Noch keine Leads vorhanden.';
           return;
         }
-        leads.forEach(lead => {
+        leads.forEach((lead) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${lead.customerName || ''}</td>
@@ -86,6 +91,7 @@
             <td>${lead.propertyType || ''}</td>
             <td>${lead.roofArea || ''}</td>
             <td>${lead.buildingYear || ''}</td>
+            <td>${lead.heatingSystem || ''}</td>
             <td>${new Date(lead.timestamp).toLocaleString('de-DE')}</td>
           `;
           tbody.appendChild(tr);
@@ -97,6 +103,64 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadLeads);
+
+    // Export leads to CSV by requesting the /api/leads/csv endpoint
+    async function exportCSV() {
+      try {
+        const response = await fetch('/api/leads/csv', {
+          headers: { 'X-Admin-Token': ADMIN_TOKEN }
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert(errorData.error || 'Fehler beim Exportieren der Leads.');
+          return;
+        }
+        const csv = await response.text();
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'leads.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('Fehler beim CSV-Export:', err);
+        alert('Fehler beim CSV-Export.');
+      }
+    }
+
+    // Attach click listener to export button
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+
+    // Delete all leads via DELETE endpoint
+    async function deleteLeads() {
+      if (!confirm('Möchten Sie wirklich alle Leads löschen?')) {
+        return;
+      }
+      try {
+        const response = await fetch('/api/leads', {
+          method: 'DELETE',
+          headers: { 'X-Admin-Token': ADMIN_TOKEN }
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert(errorData.error || 'Fehler beim Löschen der Leads.');
+          return;
+        }
+        alert('Alle Leads wurden gelöscht.');
+        // Leert die Tabelle und aktualisiert die Fehlermeldung
+        document.getElementById('leadsTable').querySelector('tbody').innerHTML = '';
+        document.getElementById('error').textContent = 'Keine Leads vorhanden.';
+      } catch (err) {
+        console.error('Fehler beim Löschen der Leads:', err);
+        alert('Fehler beim Löschen der Leads.');
+      }
+    }
+
+    // Attach listener to delete button
+    document.getElementById('deleteLeadsBtn').addEventListener('click', deleteLeads);
   </script>
 </body>
 </html>

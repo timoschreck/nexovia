@@ -101,3 +101,75 @@ app.get('/api/leads', (req, res) => {
     return res.status(500).json({ error: 'Leads konnten nicht geladen werden.' });
   }
 });
+
+// Endpoint to download leads as CSV (requires admin token)
+app.get('/api/leads/csv', (req, res) => {
+  // Check admin token via header
+  const token = req.headers['x-admin-token'];
+  const adminToken = process.env.ADMIN_TOKEN || 'secret';
+  if (token !== adminToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const leadsFile = path.join(__dirname, 'leads.json');
+  let leads = [];
+  try {
+    if (fs.existsSync(leadsFile)) {
+      const data = fs.readFileSync(leadsFile, 'utf8');
+      leads = data ? JSON.parse(data) : [];
+    }
+  } catch (err) {
+    console.error('Fehler beim Lesen der leads.json:', err);
+    return res.status(500).json({ error: 'Leads konnten nicht geladen werden.' });
+  }
+
+  // If no leads, return empty CSV
+  if (!Array.isArray(leads) || leads.length === 0) {
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="leads.csv"');
+    return res.send('');
+  }
+
+  // Collect all unique keys from all lead objects to build the CSV header
+  const keys = Array.from(new Set(leads.flatMap(lead => Object.keys(lead))));
+  const escapeValue = (value) => {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    // Escape double quotes by doubling them and wrap fields containing commas or quotes in quotes
+    const needsQuotes = /[",\n]/.test(str);
+    const escaped = str.replace(/"/g, '""');
+    return needsQuotes ? `"${escaped}"` : escaped;
+  };
+  const csvRows = [];
+  // Header row
+  csvRows.push(keys.join(','));
+  // Data rows
+  leads.forEach((lead) => {
+    const row = keys.map((key) => escapeValue(lead[key]));
+    csvRows.push(row.join(','));
+  });
+  const csvString = csvRows.join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="leads.csv"');
+  return res.send(csvString);
+});
+
+// Endpoint to delete all leads (requires admin token)
+app.delete('/api/leads', (req, res) => {
+  // Verify admin token via header
+  const token = req.headers['x-admin-token'];
+  const adminToken = process.env.ADMIN_TOKEN || 'secret';
+  if (token !== adminToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const leadsFile = path.join(__dirname, 'leads.json');
+  try {
+    // Overwrite leads.json with an empty array
+    fs.writeFileSync(leadsFile, JSON.stringify([], null, 2));
+    return res.status(200).json({ message: 'Alle Leads wurden gelöscht.' });
+  } catch (err) {
+    console.error('Fehler beim Löschen der leads.json:', err);
+    return res.status(500).json({ error: 'Leads konnten nicht gelöscht werden.' });
+  }
+});

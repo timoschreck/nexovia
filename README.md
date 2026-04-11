@@ -31,9 +31,13 @@ npm install express nodemailer
 
 ### Leads abrufen und verwalten
 
-Es gibt eine einfache Administrationsseite (`admin.html`), über die alle gespeicherten Leads eingesehen werden können. Der Server stellt dafür den Endpunkt `/api/leads` bereit, der eine JSON‑Liste der Leads zurückgibt. Aus Sicherheitsgründen verlangt dieser Endpunkt einen Header `X-Admin-Token` mit einem geheimen Token. Standardmäßig ist das Token in `server.js` auf `secret` gesetzt; in einer produktiven Umgebung sollte es über die Umgebungsvariable `ADMIN_TOKEN` überschrieben werden.
+Es gibt eine einfache Administrationsseite (`admin.html`), über die alle gespeicherten Leads eingesehen, exportiert und gelöscht werden können. Der Server stellt dafür folgende Endpunkte bereit:
 
-Die Administrationsseite sendet beim Laden automatisch eine Anfrage mit dem Token und zeigt die Leads in einer Tabelle an. Um die Seite zu verwenden, öffne `admin.html` im Browser (z. B. unter `http://localhost:3000/admin.html` wenn der Server ausgeführt wird).
+* `GET /api/leads` – Gibt eine JSON‑Liste aller Leads zurück. Aus Sicherheitsgründen muss im Header `X-Admin-Token` ein geheimes Token mitgesendet werden. Standardmäßig ist das Token in `server.js` auf `secret` gesetzt; in einer produktiven Umgebung sollte es über die Umgebungsvariable `ADMIN_TOKEN` überschrieben werden.
+* `GET /api/leads/csv` – Liefert die gleiche Datenmenge als CSV‑Datei. Die Spalten umfassen Name, E‑Mail, Telefon, Immobilientyp, Dach- oder Grundstücksfläche, Baujahr, Heizsystem und Zeitstempel.
+* `DELETE /api/leads` – Entfernt alle Leads aus der Speicherdatei. Auch hierfür ist der Admin‑Token erforderlich.
+
+Die Administrationsseite sendet beim Laden automatisch eine Anfrage mit dem Token und zeigt die Leads in einer Tabelle an. Neben einem Button „CSV exportieren“ gibt es auch einen Button „Leads löschen“, der alle Einträge nach einer Sicherheitsabfrage entfernt. Um die Seite zu verwenden, öffne `admin.html` im Browser (z. B. unter `http://localhost:3000/admin.html`, wenn der Server ausgeführt wird).
 
 Um den Server lokal auszuführen:
 
