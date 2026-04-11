@@ -147,6 +147,10 @@
       currentStep = i;
     }
     function nextStep() {
+      // Before advancing from step 1 (index 0) to step 2, adjust fields based on selected solution
+      if (currentStep === 0) {
+        updatePropertyFields();
+      }
       showStep(currentStep + 1);
     }
     function prevStep() {
@@ -154,6 +158,28 @@
     }
     function closeFunnel() {
       document.getElementById('funnel').style.display = 'none';
+    }
+
+    // Show or hide specific fields in Step 2 depending on the chosen solution (Photovoltaik, Wärmepumpe oder beides)
+    function updatePropertyFields() {
+      const solution = document.querySelector('input[name="solution"]:checked')?.value;
+      const roofField = document.getElementById('roofField');
+      const buildingYearField = document.getElementById('buildingYearField');
+      const heatingSystemField = document.getElementById('heatingSystemField');
+      if (solution === 'pv') {
+        roofField.style.display = '';
+        buildingYearField.style.display = 'none';
+        heatingSystemField.style.display = 'none';
+      } else if (solution === 'heatpump') {
+        roofField.style.display = 'none';
+        buildingYearField.style.display = '';
+        heatingSystemField.style.display = '';
+      } else {
+        // Wenn sowohl PV als auch Wärmepumpe ausgewählt sind, alle Felder anzeigen
+        roofField.style.display = '';
+        buildingYearField.style.display = '';
+        heatingSystemField.style.display = '';
+      }
     }
   
     function submitLeadAndClose() {
@@ -164,7 +190,8 @@
       const name = document.querySelector('input[name="customerName"]')?.value;
       const email = document.querySelector('input[name="customerEmail"]')?.value;
       const phone = document.querySelector('input[name="customerPhone"]')?.value;
-      const lead = { solution, propertyType, roofArea, buildingYear, name, email, phone };
+      const heatingSystem = document.querySelector('select[name="heatingSystem"]')?.value;
+      const lead = { solution, propertyType, roofArea, buildingYear, heatingSystem, name, email, phone };
       fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -227,11 +254,18 @@
             <option value="Anderes">Anderes</option>
           </select>
         </label>
-        <label>Dach- oder Grundstücksfläche (m²)
+        <label id="roofField">Dach- oder Grundstücksfläche (m²)
           <input type="number" name="roofArea" placeholder="z.&nbsp;B. 50" />
         </label>
-        <label>Baujahr des Gebäudes
+        <label id="buildingYearField">Baujahr des Gebäudes
           <input type="number" name="buildingYear" placeholder="z.&nbsp;B. 1995" />
+        </label>
+        <label id="heatingSystemField">Heizsystem
+          <select name="heatingSystem">
+            <option value="radiators">Radiatoren</option>
+            <option value="underfloor">Fußbodenheizung</option>
+            <option value="other">Andere</option>
+          </select>
         </label>
         <div style="display:flex; justify-content: space-between;">
           <button class="btn" onclick="prevStep()">Zurück</button>
