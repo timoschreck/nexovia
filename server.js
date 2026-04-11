@@ -89,6 +89,13 @@ app.post('/api/leads', async (req, res) => {
     if (!recaptchaValid) {
       return res.status(400).json({ error: 'Ungültiger Captcha-Token' });
     }
+    // Basic validation: ensure required fields are present
+    if (!lead.name || typeof lead.name !== 'string' || !lead.name.trim()) {
+      return res.status(400).json({ error: 'Name ist erforderlich' });
+    }
+    if (!lead.email || typeof lead.email !== 'string' || !lead.email.includes('@')) {
+      return res.status(400).json({ error: 'Gültige E-Mail ist erforderlich' });
+    }
     // Remove token before saving
     delete lead.recaptchaToken;
     const leads = await readLeads();
