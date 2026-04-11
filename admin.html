@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead-Verwaltung – Nexovia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #e7e7e7;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gesammelte Leads</h1>
+  <div id="error" class="error"></div>
+  <table id="leadsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>E-Mail</th>
+        <th>Telefon</th>
+        <th>Immobilientyp</th>
+        <th>Dachfläche (m²)</th>
+        <th>Baujahr</th>
+        <th>Zeitstempel</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Leads werden hier eingefügt -->
+    </tbody>
+  </table>
+
+  <script>
+    // Admin token used to authenticate requests to /api/leads
+    const ADMIN_TOKEN = 'secret';
+
+    async function loadLeads() {
+      try {
+        const response = await fetch('/api/leads', {
+          headers: { 'X-Admin-Token': ADMIN_TOKEN }
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          document.getElementById('error').textContent = errorData.error || 'Fehler beim Laden der Leads';
+          return;
+        }
+        const leads = await response.json();
+        const tbody = document.getElementById('leadsTable').querySelector('tbody');
+        if (!leads.length) {
+          document.getElementById('error').textContent = 'Noch keine Leads vorhanden.';
+          return;
+        }
+        leads.forEach(lead => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${lead.customerName || ''}</td>
+            <td>${lead.customerEmail || ''}</td>
+            <td>${lead.customerPhone || ''}</td>
+            <td>${lead.propertyType || ''}</td>
+            <td>${lead.roofArea || ''}</td>
+            <td>${lead.buildingYear || ''}</td>
+            <td>${new Date(lead.timestamp).toLocaleString('de-DE')}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        document.getElementById('error').textContent = 'Fehler beim Laden der Leads.';
+        console.error(err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLeads);
+  </script>
+</body>
+</html>

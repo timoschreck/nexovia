@@ -12,6 +12,12 @@ Die Datei `landing_page.html` ist eine eigenständige Seite mit einem mehrstufig
 
 `server.js` implementiert einen Express‑Server, der statische Dateien bedient und unter `/api/leads` POST‑Anfragen entgegennimmt. Die Daten werden in `leads.json` gespeichert.
 
+### Leads abrufen und verwalten
+
+Es gibt eine einfache Administrationsseite (`admin.html`), über die alle gespeicherten Leads eingesehen werden können. Der Server stellt dafür den Endpunkt `/api/leads` bereit, der eine JSON‑Liste der Leads zurückgibt. Aus Sicherheitsgründen verlangt dieser Endpunkt einen Header `X-Admin-Token` mit einem geheimen Token. Standardmäßig ist das Token in `server.js` auf `secret` gesetzt; in einer produktiven Umgebung sollte es über die Umgebungsvariable `ADMIN_TOKEN` überschrieben werden.
+
+Die Administrationsseite sendet beim Laden automatisch eine Anfrage mit dem Token und zeigt die Leads in einer Tabelle an. Um die Seite zu verwenden, öffne `admin.html` im Browser (z. B. unter `http://localhost:3000/admin.html` wenn der Server ausgeführt wird).
+
 Um den Server lokal auszuführen:
 
 1. Stelle sicher, dass Node.js installiert ist.

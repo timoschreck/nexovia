@@ -51,3 +51,27 @@ app.post('/api/leads', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
 });
+
+// Endpoint to fetch leads (requires admin token)
+app.get('/api/leads', (req, res) => {
+  // Simple token check via custom header
+  const token = req.headers['x-admin-token'];
+  const adminToken = process.env.ADMIN_TOKEN || 'secret';
+  if (token !== adminToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const leadsFile = path.join(__dirname, 'leads.json');
+  try {
+    if (fs.existsSync(leadsFile)) {
+      const data = fs.readFileSync(leadsFile, 'utf8');
+      const leads = data ? JSON.parse(data) : [];
+      return res.status(200).json(leads);
+    } else {
+      return res.status(200).json([]);
+    }
+  } catch (err) {
+    console.error('Fehler beim Lesen der leads.json:', err);
+    return res.status(500).json({ error: 'Leads konnten nicht geladen werden.' });
+  }
+});
