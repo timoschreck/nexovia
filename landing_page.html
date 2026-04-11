@@ -121,6 +121,21 @@
       font-size: 0.9rem;
       color: var(--color-secondary);
     }
+
+    /* Fortschrittsleiste für den Funnel */
+    .progress-bar {
+      width: 100%;
+      background: #eee;
+      height: 4px;
+      border-radius: 2px;
+      margin-bottom: 0.5rem;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background: var(--color-secondary);
+      width: 0%;
+      border-radius: 2px;
+    }
     label { display: block; margin-bottom: 1rem; }
     input, select {
       width: 100%;
@@ -147,6 +162,13 @@
       currentStep = i;
       // update progress indicator
       document.getElementById('progress').textContent = `Schritt ${i+1} von 4`;
+
+      // Update progress bar width
+      const progressBar = document.getElementById('progressBar');
+      if (progressBar) {
+        const totalSteps = 4;
+        progressBar.style.width = ((i + 1) / totalSteps * 100) + '%';
+      }
     }
     function nextStep() {
       if (currentStep === 0) {
@@ -274,6 +296,8 @@
     <div class="panel">
       <button class="close" onclick="closeFunnel()" aria-label="Fenster schließen">✖</button>
       <div id="progress" class="progress-indicator"></div>
+      <!-- Fortschrittsbalken -->
+      <div class="progress-bar"><div id="progressBar" class="progress-bar-inner"></div></div>
       <!-- Fehlerausgabe für Formularvalidierung -->
       <p id="errorMessage" style="color:red; text-align:center; margin-top:0; margin-bottom:10px;"></p>
       <!-- Step 1 -->
