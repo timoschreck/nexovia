@@ -1,175 +1,150 @@
-const fs = require('fs');
 const express = require('express');
+const fs = require('fs').promises;
 const path = require('path');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const { Parser } = require('json2csv');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const nodemailer = require('nodemailer');
+const LEADS_FILE = path.join(__dirname, 'leads.json');
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'secret';
 
-// Configure nodemailer transporter if SMTP credentials are provided
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || '',
-  port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587,
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: (process.env.SMTP_USER && process.env.SMTP_PASS)
-    ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-    : undefined
-});
+// reCAPTCHA secret for server-side validation
+const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
 
-// Middleware to parse JSON bodies
-app.use(express.json());
+// Setup nodemailer transporter using SMTP environment variables
+const smtpHost = process.env.SMTP_HOST;
+const smtpPort = process.env.SMTP_PORT;
+const smtpUser = process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASS;
+const smtpFrom = process.env.SMTP_FROM;
+const adminEmail = process.env.ADMIN_EMAIL;
 
-// Serve static files from public directory (the root of the repository)
-app.use(express.static(path.join(__dirname)));
-
-// Endpoint to handle lead submissions
-app.post('/api/leads', (req, res) => {
-  const lead = req.body;
-
-  if (!lead || Object.keys(lead).length === 0) {
-    return res.status(400).json({ error: 'Leaddaten fehlen.' });
-  }
-
-  // Append lead to leads.json file
-  const leadsFile = path.join(__dirname, 'leads.json');
-  let leads = [];
-
-  // Read existing leads
-  try {
-    if (fs.existsSync(leadsFile)) {
-      const data = fs.readFileSync(leadsFile, 'utf8');
-      if (data) {
-        leads = JSON.parse(data);
-      }
+let transporter = null;
+if (smtpHost && smtpUser && smtpPass) {
+  transporter = nodemailer.createTransport({
+    host: smtpHost,
+    port: smtpPort || 587,
+    secure: false, // upgrade later with STARTTLS
+    auth: {
+      user: smtpUser,
+      pass: smtpPass
     }
-  } catch (err) {
-    console.error('Fehler beim Lesen der leads.json:', err);
-  }
+  });
+}
 
-  // Add new lead
-  leads.push({ ...lead, timestamp: new Date().toISOString() });
+app.use(bodyParser.json());
 
-  // Write updated leads array back to file
+// Helper: verify Google reCAPTCHA token
+async function verifyRecaptcha(token) {
+  // Skip verification if no secret is configured
+  if (!RECAPTCHA_SECRET) return true;
+  const https = require('https');
+  const params = new URLSearchParams({
+    secret: RECAPTCHA_SECRET,
+    response: token
+  }).toString();
+  const url = `https://www.google.com/recaptcha/api/siteverify?${params}`;
+  return new Promise((resolve) => {
+    https.get(url, (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => (data += chunk));
+      resp.on('end', () => {
+        try {
+          const result = JSON.parse(data);
+          resolve(result.success === true);
+        } catch {
+          resolve(false);
+        }
+      });
+    }).on('error', () => resolve(false));
+  });
+}
+
+// Helper: read leads from file
+async function readLeads() {
   try {
-    fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
+    const data = await fs.readFile(LEADS_FILE, 'utf-8');
+    return JSON.parse(data || '[]');
+  } catch (err) {
+    // if file does not exist or invalid, return empty array
+    return [];
+  }
+}
 
-    // Send notification email if SMTP and admin settings are provided
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail && process.env.SMTP_USER && process.env.SMTP_PASS) {
-      const mailOptions = {
-        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+// Helper: write leads to file
+async function writeLeads(leads) {
+  await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2));
+}
+
+// POST: Save new lead
+app.post('/api/leads', async (req, res) => {
+  const lead = req.body;
+  lead.timestamp = new Date().toISOString();
+  try {
+    // Verify reCAPTCHA if token is provided
+    const token = lead.recaptchaToken;
+    const recaptchaValid = await verifyRecaptcha(token);
+    if (!recaptchaValid) {
+      return res.status(400).json({ error: 'Ungültiger Captcha-Token' });
+    }
+    // Remove token before saving
+    delete lead.recaptchaToken;
+    const leads = await readLeads();
+    leads.push(lead);
+    await writeLeads(leads);
+    // send email notification if transporter is configured
+    if (transporter && adminEmail) {
+      await transporter.sendMail({
+        from: smtpFrom || smtpUser,
         to: adminEmail,
         subject: 'Neuer Lead eingegangen',
-        text: `Es wurde ein neuer Lead generiert:\n${JSON.stringify(lead, null, 2)}`
-      };
-      transporter.sendMail(mailOptions).catch(err => {
-        console.error('Fehler beim Senden der E-Mail:', err);
+        text: `Es wurde ein neuer Lead generiert.\n\nDetails:\n${JSON.stringify(lead, null, 2)}`
       });
     }
-
-    res.status(200).json({ message: 'Lead gespeichert.' });
+    return res.status(201).json({ success: true });
   } catch (err) {
-    console.error('Fehler beim Schreiben der leads.json:', err);
-    res.status(500).json({ error: 'Lead konnte nicht gespeichert werden.' });
+    console.error(err);
+    return res.status(500).json({ error: 'Fehler beim Speichern des Leads' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server läuft auf Port ${PORT}`);
+// Middleware: verify admin token
+function verifyAdmin(req, res, next) {
+  const token = req.header('X-Admin-Token');
+  if (token === ADMIN_TOKEN) {
+    return next();
+  } else {
+    return res.status(401).json({ error: 'Ungültiger Token' });
+  }
+}
+
+// GET: return all leads (JSON)
+app.get('/api/leads', verifyAdmin, async (req, res) => {
+  const leads = await readLeads();
+  res.json(leads);
 });
 
-// Endpoint to fetch leads (requires admin token)
-app.get('/api/leads', (req, res) => {
-  // Simple token check via custom header
-  const token = req.headers['x-admin-token'];
-  const adminToken = process.env.ADMIN_TOKEN || 'secret';
-  if (token !== adminToken) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const leadsFile = path.join(__dirname, 'leads.json');
-  try {
-    if (fs.existsSync(leadsFile)) {
-      const data = fs.readFileSync(leadsFile, 'utf8');
-      const leads = data ? JSON.parse(data) : [];
-      return res.status(200).json(leads);
-    } else {
-      return res.status(200).json([]);
-    }
-  } catch (err) {
-    console.error('Fehler beim Lesen der leads.json:', err);
-    return res.status(500).json({ error: 'Leads konnten nicht geladen werden.' });
-  }
-});
-
-// Endpoint to download leads as CSV (requires admin token)
-app.get('/api/leads/csv', (req, res) => {
-  // Check admin token via header
-  const token = req.headers['x-admin-token'];
-  const adminToken = process.env.ADMIN_TOKEN || 'secret';
-  if (token !== adminToken) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const leadsFile = path.join(__dirname, 'leads.json');
-  let leads = [];
-  try {
-    if (fs.existsSync(leadsFile)) {
-      const data = fs.readFileSync(leadsFile, 'utf8');
-      leads = data ? JSON.parse(data) : [];
-    }
-  } catch (err) {
-    console.error('Fehler beim Lesen der leads.json:', err);
-    return res.status(500).json({ error: 'Leads konnten nicht geladen werden.' });
-  }
-
-  // If no leads, return empty CSV
-  if (!Array.isArray(leads) || leads.length === 0) {
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="leads.csv"');
-    return res.send('');
-  }
-
-  // Collect all unique keys from all lead objects to build the CSV header
-  const keys = Array.from(new Set(leads.flatMap(lead => Object.keys(lead))));
-  const escapeValue = (value) => {
-    if (value === null || value === undefined) return '';
-    const str = String(value);
-    // Escape double quotes by doubling them and wrap fields containing commas or quotes in quotes
-    const needsQuotes = /[",\n]/.test(str);
-    const escaped = str.replace(/"/g, '""');
-    return needsQuotes ? `"${escaped}"` : escaped;
-  };
-  const csvRows = [];
-  // Header row
-  csvRows.push(keys.join(','));
-  // Data rows
-  leads.forEach((lead) => {
-    const row = keys.map((key) => escapeValue(lead[key]));
-    csvRows.push(row.join(','));
-  });
-  const csvString = csvRows.join('\n');
+// GET: return leads as CSV
+app.get('/api/leads/csv', verifyAdmin, async (req, res) => {
+  const leads = await readLeads();
+  const parser = new Parser();
+  const csv = parser.parse(leads);
   res.setHeader('Content-Type', 'text/csv');
   res.setHeader('Content-Disposition', 'attachment; filename="leads.csv"');
-  return res.send(csvString);
+  res.send(csv);
 });
 
-// Endpoint to delete all leads (requires admin token)
-app.delete('/api/leads', (req, res) => {
-  // Verify admin token via header
-  const token = req.headers['x-admin-token'];
-  const adminToken = process.env.ADMIN_TOKEN || 'secret';
-  if (token !== adminToken) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+// DELETE: remove all leads
+app.delete('/api/leads', verifyAdmin, async (req, res) => {
+  await writeLeads([]);
+  res.json({ success: true });
+});
 
-  const leadsFile = path.join(__dirname, 'leads.json');
-  try {
-    // Overwrite leads.json with an empty array
-    fs.writeFileSync(leadsFile, JSON.stringify([], null, 2));
-    return res.status(200).json({ message: 'Alle Leads wurden gelöscht.' });
-  } catch (err) {
-    console.error('Fehler beim Löschen der leads.json:', err);
-    return res.status(500).json({ error: 'Leads konnten nicht gelöscht werden.' });
-  }
+// Serve static files (landing page & admin)
+app.use(express.static(__dirname));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
