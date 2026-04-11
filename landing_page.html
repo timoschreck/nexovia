@@ -3,12 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nexovia&nbsp;– Energiezukunft mit PV und Wärmepumpe</title>
+  <title>Nexovia – Energiezukunft mit PV und Wärmepumpe</title>
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} 
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'DEINE_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <!-- reCAPTCHA v2 -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
-    /* Grundlegende Formatierungen */
-    * {
-      box-sizing: border-box;
+    /* Basisfarben aus den Nexovia Brand Guidelines */
+    :root {
+      --color-primary: #0f1338; /* dunkelblau für Hintergründe */
+      --color-secondary: #196FD4; /* primäres Blau für Highlights */
+      --color-accent: #462C16; /* Sekundäres Purpur für Cards */
+      --color-cyan: #5FBCE5; /* Accent Cyan für CTA */
+      --color-lavender: #AFA7F2; /* Accent Lavendel für subtile Highlights */
+      --color-light: #F5F7FF; /* Sehr helles Neutral für Panels */
     }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
@@ -17,100 +47,59 @@
       background-color: #fff;
     }
     header {
-      position: relative;
-      overflow: hidden;
-      color: #fff;
+      padding: 4rem 1rem;
       text-align: center;
-    }
-    header img.hero {
-      width: 100%;
-      height: 60vh;
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.6);
-    }
-    header .hero-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 90%;
-    }
-    header h1 {
-      font-size: 2.4rem;
-      margin-bottom: 0.6rem;
-    }
-    header p {
-      font-size: 1.1rem;
-      margin-bottom: 1.2rem;
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    section {
-      padding: 3rem 1rem;
-    }
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: #1e3a8a;
-    }
-    ul li {
-      margin-bottom: 0.5rem;
-      list-style-type: disc;
-      margin-left: 1.2rem;
-    }
-    .btn {
-      background-color: #10b981;
-      border: none;
-      padding: 0.8rem 1.5rem;
+      background: linear-gradient(180deg, var(--color-secondary) 0%, var(--color-cyan) 100%);
       color: #fff;
+      position: relative;
+    }
+    header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    header p { font-size: 1.2rem; margin-bottom: 1.5rem; }
+    .btn {
+      background-color: var(--color-cyan);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
       font-size: 1rem;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
-    .btn:hover {
-      background-color: #0e9f6e;
+    .trust-section {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
     }
-    /* Funnel Overlay */
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+    section { padding: 2rem 0; }
+    h2 { color: var(--color-primary); margin-bottom: 1rem; }
+    /* Funnel styles */
     #funnel {
-      display: none;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
       z-index: 1000;
     }
     #funnel .panel {
       background: #fff;
-      margin: 5vh auto;
-      padding: 1.5rem;
-      max-width: 500px;
+      padding: 2rem;
       border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
       position: relative;
-    }
-    #funnel h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: #1e3a8a;
-    }
-    #funnel label {
-      display: block;
-      margin-bottom: 0.6rem;
-    }
-    #funnel input,
-    #funnel select {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      margin-bottom: 0.9rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
     }
     #funnel .close {
       position: absolute;
@@ -118,36 +107,48 @@
       right: 0.5rem;
       background: none;
       border: none;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       cursor: pointer;
     }
     .form-step {
       display: none;
     }
-    footer {
-      background: #f3f4f6;
-      padding: 1rem;
-      text-align: center;
+    .form-step.active {
+      display: block;
+    }
+    .progress-indicator {
+      margin-bottom: 1rem;
       font-size: 0.9rem;
-      color: #666;
+      color: var(--color-secondary);
+    }
+    label { display: block; margin-bottom: 1rem; }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+    }
+    .step-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
     }
   </style>
   <script>
-    // Einfache Funnel-Logik: zeigt jeweils nur einen Schritt
     let currentStep = 0;
     function startFunnel() {
-      document.getElementById('funnel').style.display = 'block';
+      document.getElementById('funnel').style.display = 'flex';
       showStep(0);
     }
     function showStep(i) {
       const steps = document.querySelectorAll('.form-step');
-      steps.forEach((step, index) => {
-        step.style.display = index === i ? 'block' : 'none';
+      steps.forEach((step, idx) => {
+        step.classList.toggle('active', idx === i);
       });
       currentStep = i;
+      // update progress indicator
+      document.getElementById('progress').textContent = `Schritt ${i+1} von 4`;
     }
     function nextStep() {
-      // Before advancing from step 1 (index 0) to step 2, adjust fields based on selected solution
       if (currentStep === 0) {
         updatePropertyFields();
       }
@@ -159,8 +160,7 @@
     function closeFunnel() {
       document.getElementById('funnel').style.display = 'none';
     }
-
-    // Show or hide specific fields in Step 2 depending on the chosen solution (Photovoltaik, Wärmepumpe oder beides)
+    // Show/hide fields based on solution selection
     function updatePropertyFields() {
       const solution = document.querySelector('input[name="solution"]:checked')?.value;
       const roofField = document.getElementById('roofField');
@@ -175,78 +175,121 @@
         buildingYearField.style.display = '';
         heatingSystemField.style.display = '';
       } else {
-        // Wenn sowohl PV als auch Wärmepumpe ausgewählt sind, alle Felder anzeigen
         roofField.style.display = '';
         buildingYearField.style.display = '';
         heatingSystemField.style.display = '';
       }
     }
-  
     function submitLeadAndClose() {
-      const solution = document.querySelector('input[name="solution"]:checked')?.value;
-      const propertyType = document.querySelector('select[name="propertyType"]')?.value;
-      const roofArea = document.querySelector('input[name="roofArea"]')?.value;
-      const buildingYear = document.querySelector('input[name="buildingYear"]')?.value;
-      const name = document.querySelector('input[name="customerName"]')?.value;
-      const email = document.querySelector('input[name="customerEmail"]')?.value;
-      const phone = document.querySelector('input[name="customerPhone"]')?.value;
-      const heatingSystem = document.querySelector('select[name="heatingSystem"]')?.value;
-      const lead = { solution, propertyType, roofArea, buildingYear, heatingSystem, name, email, phone };
+      // Referenz auf Fehlermeldungs-Element und leeren Inhalt setzen
+      const errorEl = document.getElementById('errorMessage');
+      if (errorEl) {
+        errorEl.textContent = '';
+      }
+      const lead = {
+        solution: document.querySelector('input[name="solution"]:checked')?.value,
+        propertyType: document.querySelector('select[name="propertyType"]').value,
+        roofArea: document.querySelector('input[name="roofArea"]').value,
+        buildingYear: document.querySelector('input[name="buildingYear"]').value,
+        heatingSystem: document.querySelector('select[name="heatingSystem"]').value,
+        name: document.querySelector('input[name="customerName"]').value,
+        email: document.querySelector('input[name="customerEmail"]').value,
+        phone: document.querySelector('input[name="customerPhone"]').value
+      };
+      // reCAPTCHA-Token abrufen
+      let recaptchaToken = '';
+      if (typeof grecaptcha !== 'undefined') {
+        recaptchaToken = grecaptcha.getResponse();
+      }
+      if (!recaptchaToken) {
+        if (errorEl) {
+          errorEl.textContent = 'Bitte bestätigen Sie, dass Sie kein Roboter sind.';
+        }
+        return;
+      }
+      // Token dem Lead hinzufügen
+      lead.recaptchaToken = recaptchaToken;
+      // Validierung: Name und E-Mail dürfen nicht leer sein
+      if (!lead.name || !lead.email) {
+        if (errorEl) {
+          errorEl.textContent = 'Bitte geben Sie Ihren Namen und Ihre E-Mail-Adresse an.';
+        }
+        return;
+      }
+      // E-Mail-Format prüfen
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(lead.email)) {
+        if (errorEl) {
+          errorEl.textContent = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+        }
+        return;
+      }
+      // Lead an Backend senden
       fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(lead)
-      }).catch((err) => console.error(err));
+      }).catch(err => console.error(err));
+      // Tracking-Events auslösen
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'lead_submitted', {
+          event_category: 'conversion',
+          event_label: 'funnel'
+        });
+      }
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'Lead');
+      }
+      // Funnel schließen
       closeFunnel();
     }
-
   </script>
 </head>
 <body>
-  <header style="background: linear-gradient(180deg, #0ea5e9 0%, #36d399 100%); padding: 4rem 1rem; text-align: center;">
-    <div class="hero-content">
-      <h1>Ihre Energiezukunft beginnt hier</h1>
-      <p>Reduzieren Sie Ihre Strom‑ und Heizkosten und leisten Sie einen Beitrag zum Klimaschutz – mit Solarstrom und modernen Wärmepumpen.</p>
-      <button class="btn" onclick="startFunnel()">Jetzt unverbindlich beraten lassen</button>
+  <header>
+    <h1>Bis zu 60% Energiekosten sparen – mit Photovoltaik &amp; Wärmepumpe vom Experten</h1>
+    <p>Profitieren Sie von exklusiven Leads und datengestützten Prozessen. Unser Rundum‑Service bringt Sie auf Erfolgskurs.</p>
+    <button class="btn" onclick="startFunnel()">Jetzt unverbindlich beraten lassen</button>
+    <div class="trust-section">
+      <div class="trust-item">⭐ 4.8/5 Bewertung</div>
+      <div class="trust-item">✔️ 1000+ zufriedene Kunden</div>
+      <div class="trust-item">✔️ Kostenlose Beratung</div>
     </div>
   </header>
 
   <section id="pv-benefits" class="container">
     <h2>Vorteile der Photovoltaik</h2>
-    <p>Eine Photovoltaikanlage senkt Ihre Stromkosten erheblich und macht Sie unabhängiger von steigenden Energiepreisen. Solarstrom wird CO₂‑frei erzeugt; hochwertige Module halten 30–40&nbsp;Jahre und sind inzwischen so günstig wie nie zuvor, da die Preise seit 2010 stark gesunken sind【103779893272945†L40-L56】【103779893272945†L148-L159】. Förderprogramme und Steuervergünstigungen verbessern die Wirtschaftlichkeit zusätzlich【103779893272945†L75-L82】.</p>
+    <p>Eine Photovoltaikanlage senkt Ihre Stromkosten erheblich und macht Sie unabhängiger von steigenden Energiepreisen. Solarstrom wird CO₂‑frei erzeugt; hochwertige Module halten 30–40 Jahre und sind inzwischen so günstig wie nie zuvor. Förderprogramme und Steuervergünstigungen verbessern die Wirtschaftlichkeit zusätzlich.</p>
   </section>
-
   <section id="heatpump-benefits" class="container" style="background:#f9fafb;">
     <h2>Vorteile der Wärmepumpe</h2>
-    <p>Luft‑Wärmepumpen nutzen die Umgebungswärme der Außenluft für Heizung und Warmwasser【899122521376428†L59-L63】. Moderne Geräte können flexibel innen, außen oder als Split‑Variante installiert werden【899122521376428†L63-L67】. Die Anschaffung für ein Einfamilienhaus kostet etwa 10.000–18.000&nbsp;€ und wird durch die Bundesförderung für effiziente Gebäude (BEG‑EM) mit bis zu 70&nbsp;% (maximal 21.000&nbsp;€) bezuschusst【899122521376428†L66-L69】. Mit einem CO₂‑Ausstoß von rund 100&nbsp;g pro kWh sind Wärmepumpen deutlich klimafreundlicher als herkömmliche Heizungen (250–500&nbsp;g CO₂/kWh) und beziehen rund drei Viertel der Heizenergie aus der Luft【899122521376428†L241-L245】.</p>
+    <p>Moderne Wärmepumpen nutzen Umweltwärme und arbeiten sehr effizient. Sie senken Ihre Heizkosten, reduzieren Emissionen und erhöhen den Immobilienwert. Kombiniert mit Photovoltaik entsteht ein nahezu autarkes Energiesystem.</p>
   </section>
-
-  <section id="cta" class="container">
+  <section id="why-nexovia" class="container">
     <h2>Warum Nexovia?</h2>
-    <ul>
-      <li>Individuelle Beratung durch erfahrene Energie‑Experten</li>
-      <li>Maßgeschneiderte PV‑ und Wärmepumpenlösungen</li>
-      <li>Transparente Kostenübersicht und Förderberatung</li>
-      <li>Rundum‑Sorglos‑Service von der Planung bis zur Installation</li>
-    </ul>
-    <button class="btn" onclick="startFunnel()">Jetzt Angebot anfordern</button>
+    <p>Als führender Partner für Recruiting und Leadgenerierung im Bereich erneuerbare Energien verbinden wir qualifizierte Endkunden mit passenden Fachkräften. Unser datengetriebener Ansatz, exklusive Leads und Branchenfokus sorgen für messbaren Erfolg.</p>
   </section>
-
-  <!-- Funnel-Overlay: Mehrstufiger Lead-Formularprozess -->
+  <!-- Funnel Overlay -->
   <div id="funnel">
     <div class="panel">
       <button class="close" onclick="closeFunnel()" aria-label="Fenster schließen">✖</button>
-      <!-- Schritt 1 -->
-      <div class="form-step">
-        <h2>1. Welche Lösung interessiert Sie?</h2>
-        <label><input type="radio" name="solution" value="pv"> Photovoltaik</label>
-        <label><input type="radio" name="solution" value="heatpump"> Wärmepumpe</label>
-        <label><input type="radio" name="solution" value="both"> Beides</label>
-        <button class="btn" style="margin-top:1rem;" onclick="nextStep()">Weiter</button>
+      <div id="progress" class="progress-indicator"></div>
+      <!-- Fehlerausgabe für Formularvalidierung -->
+      <p id="errorMessage" style="color:red; text-align:center; margin-top:0; margin-bottom:10px;"></p>
+      <!-- Step 1 -->
+      <div class="form-step active">
+        <h3>Welche Lösung interessiert Sie?</h3>
+        <label><input type="radio" name="solution" value="pv" /> Photovoltaik</label>
+        <label><input type="radio" name="solution" value="heatpump" /> Wärmepumpe</label>
+        <label><input type="radio" name="solution" value="both" /> Beides</label>
+        <div class="step-buttons">
+          <span></span>
+          <button class="btn" onclick="nextStep()">Weiter</button>
+        </div>
       </div>
-      <!-- Schritt 2 -->
+      <!-- Step 2 -->
       <div class="form-step">
-        <h2>2. Angaben zu Ihrer Immobilie</h2>
+        <h3>Angaben zu Ihrer Immobilie</h3>
         <label>Eigentumsart
           <select name="propertyType">
             <option value="Eigentum">Eigentum</option>
@@ -255,10 +298,10 @@
           </select>
         </label>
         <label id="roofField">Dach- oder Grundstücksfläche (m²)
-          <input type="number" name="roofArea" placeholder="z.&nbsp;B. 50" />
+          <input type="number" name="roofArea" placeholder="z. B. 50" />
         </label>
         <label id="buildingYearField">Baujahr des Gebäudes
-          <input type="number" name="buildingYear" placeholder="z.&nbsp;B. 1995" />
+          <input type="number" name="buildingYear" placeholder="z. B. 1995" />
         </label>
         <label id="heatingSystemField">Heizsystem
           <select name="heatingSystem">
@@ -267,39 +310,40 @@
             <option value="other">Andere</option>
           </select>
         </label>
-        <div style="display:flex; justify-content: space-between;">
+        <div class="step-buttons">
           <button class="btn" onclick="prevStep()">Zurück</button>
           <button class="btn" onclick="nextStep()">Weiter</button>
         </div>
       </div>
-      <!-- Schritt 3 -->
+      <!-- Step 3 -->
       <div class="form-step">
-        <h2>3. Ihre Kontaktdaten</h2>
+        <h3>Ihre Kontaktdaten</h3>
         <label>Name
           <input type="text" name="customerName" placeholder="Ihr Name" />
         </label>
         <label>E‑Mail
           <input type="email" name="customerEmail" placeholder="Ihre E‑Mail-Adresse" />
         </label>
-        <label>Telefon
+        <label>Telefon (optional)
           <input type="tel" name="customerPhone" placeholder="Ihre Telefonnummer" />
         </label>
-        <div style="display:flex; justify-content: space-between;">
+      <!-- reCAPTCHA Widget für Spam-Schutz -->
+      <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+        <div class="step-buttons">
           <button class="btn" onclick="prevStep()">Zurück</button>
           <button class="btn" onclick="nextStep()">Weiter</button>
         </div>
       </div>
-      <!-- Schritt 4 -->
+      <!-- Step 4 -->
       <div class="form-step">
-        <h2>4. Vielen Dank!</h2>
+        <h3>Vielen Dank!</h3>
         <p>Wir haben Ihre Angaben erhalten und melden uns zeitnah bei Ihnen, um ein individuelles Angebot zu erstellen.</p>
         <button class="btn" onclick="submitLeadAndClose()">Fenster schließen</button>
       </div>
     </div>
   </div>
-
-  <footer>
-    &copy;&nbsp;2026&nbsp;Nexovia&nbsp;GmbH – Ihr Partner für nachhaltige Energie.
+  <footer style="text-align:center; padding:2rem 0; background:#f9fafb;">
+    © 2026 Nexovia GmbH – Ihr Partner für nachhaltige Energie.
   </footer>
 </body>
 </html>
