@@ -249,6 +249,9 @@
         }
         return;
       }
+      // Variant information hinzufügen
+      lead.variant = typeof variant !== 'undefined' ? variant : 'A';
+
       // Lead an Backend senden
       fetch('/api/leads', {
         method: 'POST',
@@ -281,6 +284,33 @@
       <div class="trust-item">✔️ Kostenlose Beratung</div>
     </div>
   </header>
+
+  <!-- A/B Testing Script -->
+  <script>
+    // Variant determination using URL parameter, localStorage or random assignment
+    let variant = (function() {
+      const params = new URLSearchParams(window.location.search);
+      let v = params.get('variant');
+      const saved = localStorage.getItem('variant');
+      if (!v) v = saved || (Math.random() < 0.5 ? 'A' : 'B');
+      // Persist variant for subsequent visits
+      localStorage.setItem('variant', v);
+      return v;
+    })();
+    // Apply variant-specific content once DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      const headerEl = document.querySelector('header');
+      if (!headerEl) return;
+      const titleEl = headerEl.querySelector('h1');
+      const descEl = headerEl.querySelector('p');
+      const btnEl = headerEl.querySelector('button');
+      if (variant === 'B') {
+        if (titleEl) titleEl.textContent = 'Sichern Sie sich jetzt Ihre Förderung für PV & Wärmepumpe – Starten Sie in eine klimaneutrale Zukunft!';
+        if (descEl) descEl.textContent = 'Wir beraten Sie persönlich und zeigen Ihnen, wie Sie von staatlichen Förderungen profitieren können.';
+        if (btnEl) btnEl.textContent = 'Zum kostenlosen Energie‑Check';
+      }
+    });
+  </script>
 
   <section id="pv-benefits" class="container">
     <h2>Vorteile der Photovoltaik</h2>
