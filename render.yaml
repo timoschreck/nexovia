@@ -23,3 +23,7 @@ services:
         value: admin@example.com
       - key: RECAPTCHA_SECRET
         value: YOUR_RECAPTCHA_SECRET_KEY
+      - key: GA_MEASUREMENT_ID
+        value: G-2P76BF4SQW
+      - key: FB_PIXEL_ID
+        value: '1670691687685255'
